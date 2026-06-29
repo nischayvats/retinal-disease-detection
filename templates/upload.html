@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Image - RetinalAI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #E0F2FE 0%, #FAE8FF 50%, #FEF3C7 100%);
+        }
+        
+        .input-focus:focus {
+            border-color: #0EA5E9;
+            box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+        }
+        
+        .drag-over {
+            border-color: #0EA5E9;
+            background-color: rgba(14, 165, 233, 0.05);
+        }
+    </style>
+</head>
+<body class="gradient-bg min-h-screen">
+    
+    <nav class="bg-white/80 backdrop-blur-md shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-3">
+                    <svg class="w-10 h-10 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                    </svg>
+                    <span class="text-2xl font-bold bg-gradient-to-r from-cyan-600 to-violet-600 bg-clip-text text-transparent">RetinalAI</span>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span class="text-gray-700 font-medium">Welcome, {{ username }}</span>
+                    <a href="/logout" class="px-6 py-2 bg-gray-100 text-gray-700 rounded-full hover:bg-gray-200 transition">Logout</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="max-w-4xl mx-auto px-4 py-12">
+        <div class="text-center mb-10 fade-in">
+            <h1 class="text-4xl font-extrabold text-gray-900 mb-3">Patient Diagnosis</h1>
+            <p class="text-lg text-gray-600">Upload retinal fundus image for AI-powered analysis</p>
+        </div>
+        
+        <div class="bg-white rounded-3xl shadow-2xl p-8 fade-in">
+            <form method="POST" action="/predict" enctype="multipart/form-data" id="uploadForm">
+                
+                <div class="grid md:grid-cols-2 gap-6 mb-8">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Patient Name</label>
+                        <input type="text" name="patient_name" required 
+                               class="input-focus w-full px-4 py-3 border-2 border-gray-200 rounded-xl transition outline-none"
+                               placeholder="John Doe">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Age</label>
+                        <input type="number" name="patient_age" required min="1" max="120"
+                               class="input-focus w-full px-4 py-3 border-2 border-gray-200 rounded-xl transition outline-none"
+                               placeholder="45">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Gender</label>
+                        <select name="patient_gender" required 
+                                class="input-focus w-full px-4 py-3 border-2 border-gray-200 rounded-xl transition outline-none">
+                            <option value="">Select Gender</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Contact Number</label>
+                        <input type="tel" name="patient_contact" required 
+                               class="input-focus w-full px-4 py-3 border-2 border-gray-200 rounded-xl transition outline-none"
+                               placeholder="+1 234 567 8900">
+                    </div>
+                </div>
+                
+                <div class="mb-8">
+                    <label class="block text-sm font-semibold text-gray-700 mb-3">Retinal Fundus Image</label>
+                    <div id="dropZone" class="border-3 border-dashed border-gray-300 rounded-2xl p-12 text-center transition cursor-pointer hover:border-cyan-400">
+                        <input type="file" name="image" id="imageInput" accept="image/*" required class="hidden">
+                        <div id="uploadPrompt">
+                            <svg class="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                            </svg>
+                            <p class="text-lg font-semibold text-gray-700 mb-2">Drop image here or click to browse</p>
+                            <p class="text-sm text-gray-500">Supports JPG, PNG (512×512 recommended)</p>
+                        </div>
+                        <div id="imagePreview" class="hidden">
+                            <img id="previewImg" class="max-w-md mx-auto rounded-xl shadow-lg mb-4">
+                            <p id="fileName" class="text-gray-700 font-medium"></p>
+                            <button type="button" onclick="clearImage()" class="mt-3 text-cyan-600 hover:text-cyan-700 font-medium">
+                                Change Image
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <button type="submit" id="submitBtn"
+                        class="w-full py-4 bg-gradient-to-r from-cyan-500 to-violet-500 text-white font-bold text-lg rounded-xl hover:shadow-2xl transition transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed">
+                    Analyze Image
+                </button>
+            </form>
+        </div>
+        
+        <div class="mt-8 bg-amber-50 border border-amber-200 rounded-2xl p-6">
+            <div class="flex items-start space-x-3">
+                <svg class="w-6 h-6 text-amber-600 flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                <div>
+                    <h3 class="font-semibold text-amber-900 mb-2">Image Requirements</h3>
+                    <ul class="text-sm text-amber-800 space-y-1">
+                        <li>• Use high-quality retinal fundus photographs</li>
+                        <li>• Ensure optic disc and macula are clearly visible</li>
+                        <li>• Recommended resolution: 512×512 pixels or higher</li>
+                        <li>• Supported formats: JPG, PNG, JPEG</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const dropZone = document.getElementById('dropZone');
+        const imageInput = document.getElementById('imageInput');
+        const uploadPrompt = document.getElementById('uploadPrompt');
+        const imagePreview = document.getElementById('imagePreview');
+        const previewImg = document.getElementById('previewImg');
+        const fileName = document.getElementById('fileName');
+        const submitBtn = document.getElementById('submitBtn');
+        
+        dropZone.addEventListener('click', () => imageInput.click());
+        
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('drag-over');
+        });
+        
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('drag-over');
+        });
+        
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('drag-over');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                imageInput.files = files;
+                handleImageUpload(files[0]);
+            }
+        });
+        
+        imageInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleImageUpload(e.target.files[0]);
+            }
+        });
+        
+        function handleImageUpload(file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                previewImg.src = e.target.result;
+                fileName.textContent = file.name;
+                uploadPrompt.classList.add('hidden');
+                imagePreview.classList.remove('hidden');
+            };
+            reader.readAsDataURL(file);
+        }
+        
+        function clearImage() {
+            imageInput.value = '';
+            uploadPrompt.classList.remove('hidden');
+            imagePreview.classList.add('hidden');
+        }
+        
+        document.getElementById('uploadForm').addEventListener('submit', () => {
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<svg class="animate-spin h-5 w-5 mx-auto" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>';
+        });
+    </script>
+</body>
+</html>

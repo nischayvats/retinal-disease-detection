@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - RetinalAI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.6s ease-out;
+        }
+        
+        .slide-in {
+            animation: slideIn 0.8s ease-out;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #E0F2FE 0%, #FAE8FF 50%, #FEF3C7 100%);
+        }
+        
+        .input-focus:focus {
+            border-color: #0EA5E9;
+            box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+        }
+    </style>
+</head>
+<body class="gradient-bg min-h-screen flex items-center justify-center p-4">
+    
+    <div class="w-full max-w-5xl grid md:grid-cols-2 gap-8 items-center">
+        
+        <div class="slide-in hidden md:block">
+            <div class="text-center">
+                <div class="flex items-center justify-center mb-6">
+                    <svg class="w-16 h-16 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                    </svg>
+                </div>
+                <h1 class="text-4xl font-extrabold text-gray-900 mb-4">Welcome to RetinalAI</h1>
+                <p class="text-lg text-gray-600 mb-8">Join thousands of healthcare professionals using AI-powered retinal disease detection</p>
+                
+                <div class="space-y-4 text-left bg-white/50 backdrop-blur-sm rounded-2xl p-6">
+                    <div class="flex items-start space-x-3">
+                        <svg class="w-6 h-6 text-cyan-600 flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                        </svg>
+                        <div>
+                            <h3 class="font-semibold text-gray-900">Multi-Disease Detection</h3>
+                            <p class="text-gray-600 text-sm">Detect 8 retinal conditions simultaneously</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start space-x-3">
+                        <svg class="w-6 h-6 text-violet-600 flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                        </svg>
+                        <div>
+                            <h3 class="font-semibold text-gray-900">Instant Analysis</h3>
+                            <p class="text-gray-600 text-sm">Get results in under 3 seconds</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start space-x-3">
+                        <svg class="w-6 h-6 text-amber-600 flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                        </svg>
+                        <div>
+                            <h3 class="font-semibold text-gray-900">Visual Explanations</h3>
+                            <p class="text-gray-600 text-sm">Grad-CAM heatmaps for transparency</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="fade-in">
+            <div class="bg-white rounded-3xl shadow-2xl p-8 md:p-10">
+                <div class="mb-8">
+                    <h2 class="text-3xl font-bold text-gray-900 mb-2">Create Account</h2>
+                    <p class="text-gray-600">Start diagnosing retinal diseases with AI</p>
+                </div>
+                
+                {% if error %}
+                <div class="mb-6 p-4 bg-rose-50 border border-rose-200 rounded-xl flex items-center space-x-3">
+                    <svg class="w-5 h-5 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <p class="text-rose-700 font-medium">{{ error }}</p>
+                </div>
+                {% endif %}
+                
+                <form method="POST" action="/signup" class="space-y-6">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Username</label>
+                        <input type="text" name="username" required 
+                               class="input-focus w-full px-4 py-3 border-2 border-gray-200 rounded-xl transition outline-none"
+                               placeholder="Enter your username">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Email Address</label>
+                        <input type="email" name="email" required 
+                               class="input-focus w-full px-4 py-3 border-2 border-gray-200 rounded-xl transition outline-none"
+                               placeholder="your.email@example.com">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Password</label>
+                        <input type="password" name="password" required 
+                               class="input-focus w-full px-4 py-3 border-2 border-gray-200 rounded-xl transition outline-none"
+                               placeholder="Create a strong password">
+                    </div>
+                    
+                    <button type="submit" 
+                            class="w-full py-4 bg-gradient-to-r from-cyan-500 to-violet-500 text-white font-semibold rounded-xl hover:shadow-xl transition transform hover:scale-105">
+                        Create Account
+                    </button>
+                </form>
+                
+                <div class="mt-6 text-center">
+                    <p class="text-gray-600">
+                        Already have an account? 
+                        <a href="/login" class="text-cyan-600 font-semibold hover:text-cyan-700">Login here</a>
+                    </p>
+                </div>
+                
+                <div class="mt-8 pt-6 border-t border-gray-200 text-center">
+                    <a href="/" class="text-gray-600 hover:text-gray-900 font-medium flex items-center justify-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                        </svg>
+                        <span>Back to Home</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
